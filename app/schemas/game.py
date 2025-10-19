@@ -60,6 +60,7 @@ class GamePublic(BaseModel):
     id: int
     title: str
     description: str
+    game_group_id: int
     duration: int
     cover_image: str
     music: str
@@ -70,6 +71,7 @@ class GameBasePublic(BaseModel):
     id: int
     title: str
     description: str
+    game_group_id: int
     duration: int
     cover_image: str
 

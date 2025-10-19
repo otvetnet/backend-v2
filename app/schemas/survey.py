@@ -12,6 +12,8 @@ class AnswerOptionPublic(AnswerOptionBase):
 class QuestionPublic(QuestionBase):
     id: int
     text: str
+    group_id: int
+    voice: str | None = None
     options: List[AnswerOptionPublic]
 
 
@@ -39,4 +41,4 @@ class SurveySubmission(BaseModel):
 class SurveyResultPublic(BaseModel):
     survey_id: int
     score: int
-    suggested_game: int
+    suggested_game: int | None = None
