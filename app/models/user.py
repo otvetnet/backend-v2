@@ -1,10 +1,13 @@
 import uuid
-from typing import List
+from typing import List, TYPE_CHECKING
 
 from sqlmodel import Field, Relationship, SQLModel
 
 from app.models.city import City
 from app.models.survey import SurveyResponse
+
+if TYPE_CHECKING:
+    from app.models.game import GameResult
 
 
 # Base model (common attributes)
@@ -27,3 +30,5 @@ class User(UserBase, table=True):
     city_id: int = Field(foreign_key="city.id")
     city: City = Relationship(back_populates="users")
     responses: List["SurveyResponse"] = Relationship(back_populates="user")
+    # game results relationship
+    results: List["GameResult"] = Relationship(back_populates="user")

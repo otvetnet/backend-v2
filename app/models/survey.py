@@ -1,5 +1,6 @@
 import uuid
-from typing import List, TYPE_CHECKING
+from typing import List, TYPE_CHECKING, Optional
+from datetime import datetime
 from sqlmodel import Field, SQLModel, Relationship
 
 if TYPE_CHECKING:
@@ -99,6 +100,9 @@ class SurveyResponse(SQLModel, table=True):
     dep4: int = Field(default=0)
     dep5: int = Field(default=0)
     dep_total: int = Field(default=0)
+
+    # datetime when the survey was submitted (for statistics)
+    finished_at: Optional[datetime] = Field(default_factory=datetime.utcnow)
 
     user: "User" = Relationship(back_populates="responses")
     survey: "Survey" = Relationship(back_populates="responses")

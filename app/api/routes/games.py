@@ -5,6 +5,7 @@ from fastapi import APIRouter
 from sqlmodel import select
 
 from app.api.deps import SessionDep
+from datetime import datetime
 from app.models.game import Game, Scene, GameResult
 from app.schemas.game import GamePublic, GameBasePublic, GameFinishIn
 
@@ -51,7 +52,8 @@ def finish_game(*, session: SessionDep, data: GameFinishIn) -> Any:
     result = GameResult(
         user_id=data.user_id,
         game_id=data.game_id,
-        score=total_score
+        score=total_score,
+        finished_at=datetime.utcnow()
     )
 
     session.add(result)

@@ -1,9 +1,13 @@
 import uuid
-from typing import List, Dict
+from typing import List, Dict, Optional, TYPE_CHECKING
 
+from datetime import datetime
 from sqlalchemy.sql.schema import Column
 from sqlalchemy.sql.sqltypes import JSON
 from sqlmodel import Field, SQLModel, Relationship
+
+if TYPE_CHECKING:
+    from app.models.user import User
 
 
 class Game(SQLModel, table=True):
@@ -42,3 +46,8 @@ class GameResult(SQLModel, table=True):
     user_id: uuid.UUID = Field(foreign_key="user.id")
     game_id: int = Field(foreign_key="game.id")
     score: int = Field(default=None)
+    # datetime when the game was finished (for statistics)
+    finished_at: Optional[datetime] = Field(default=None)
+
+    # relationship to user to allow admin views and joins
+    user: "User" = Relationship(back_populates="results")

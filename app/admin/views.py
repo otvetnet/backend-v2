@@ -1,8 +1,8 @@
 from starlette_admin.contrib.sqlmodel import ModelView
 
 from starlette_admin.fields import StringField, IntegerField, JSONField, HasMany
-from app.admin.fields import UserFullNameField, CityNameField
-from app.models.game import Game, Scene, Certificate
+from app.admin.fields import UserFullNameField, CityNameField, DateField
+from app.models.game import Game, Scene, Certificate, GameResult
 from app.models.survey import AnswerOption, Question, Survey, SurveyResponse
 from app.models.user import User
 
@@ -55,43 +55,44 @@ class SurveyResponseView(ModelView):
         IntegerField("age", label="Возраст"),
         StringField("city", label="Город"),
         StringField("school", label="Школа"),
-        IntegerField("q1", label="Вопрос 1"),
-        IntegerField("q2", label="Вопрос 2"),
-        IntegerField("q3", label="Вопрос 3"),
-        IntegerField("q4", label="Вопрос 4"),
-        IntegerField("q5", label="Вопрос 5"),
+        DateField(name="finished_at", label="Дата прохождения"),
+        IntegerField("q1", label="1.1"),
+        IntegerField("q2", label="1.2"),
+        IntegerField("q3", label="1.3"),
+        IntegerField("q4", label="1.4"),
+        IntegerField("q5", label="1.5"),
         IntegerField("g1_total", label="Итого 1"),
-        IntegerField("q6", label="Вопрос 6"),
-        IntegerField("q7", label="Вопрос 7"),
-        IntegerField("q8", label="Вопрос 8"),
-        IntegerField("q9", label="Вопрос 9"),
-        IntegerField("q10", label="Вопрос 10"),
+        IntegerField("q6", label="2.1"),
+        IntegerField("q7", label="2.2"),
+        IntegerField("q8", label="2.3"),
+        IntegerField("q9", label="2.4"),
+        IntegerField("q10", label="2.5"),
         IntegerField("g2_total", label="Итого 2"),
-        IntegerField("q11", label="Вопрос 11"),
-        IntegerField("q12", label="Вопрос 12"),
-        IntegerField("q13", label="Вопрос 13"),
-        IntegerField("q14", label="Вопрос 14"),
-        IntegerField("q15", label="Вопрос 15"),
+        IntegerField("q11", label="3.1"),
+        IntegerField("q12", label="3.2"),
+        IntegerField("q13", label="3.3"),
+        IntegerField("q14", label="3.4"),
+        IntegerField("q15", label="3.5"),
         IntegerField("g3_total", label="Итого 3"),
-        IntegerField("q16", label="Вопрос 16"),
-        IntegerField("q17", label="Вопрос 17"),
-        IntegerField("q18", label="Вопрос 18"),
-        IntegerField("q19", label="Вопрос 19"),
-        IntegerField("q20", label="Вопрос 20"),
+        IntegerField("q16", label="4.1"),
+        IntegerField("q17", label="4.2"),
+        IntegerField("q18", label="4.3"),
+        IntegerField("q19", label="4.4"),
+        IntegerField("q20", label="4.5"),
         IntegerField("g4_total", label="Итого 4"),
-        IntegerField("q21", label="Вопрос 21"),
-        IntegerField("q22", label="Вопрос 22"),
-        IntegerField("q23", label="Вопрос 23"),
-        IntegerField("q24", label="Вопрос 24"),
-        IntegerField("q25", label="Вопрос 25"),
+        IntegerField("q21", label="5.1"),
+        IntegerField("q22", label="5.2"),
+        IntegerField("q23", label="5.3"),
+        IntegerField("q24", label="5.4"),
+        IntegerField("q25", label="5.5"),
         IntegerField("g5_total", label="Итого 5"),
-        IntegerField("q26", label="Вопрос 26"),
-        IntegerField("q27", label="Вопрос 27"),
-        IntegerField("q28", label="Вопрос 28"),
-        IntegerField("q29", label="Вопрос 29"),
-        IntegerField("q30", label="Вопрос 30"),
+        IntegerField("q26", label="6.1"),
+        IntegerField("q27", label="6.2"),
+        IntegerField("q28", label="6.3"),
+        IntegerField("q29", label="6.4"),
+        IntegerField("q30", label="6.5"),
         IntegerField("g6_total", label="Итого 6"),
-        IntegerField("dep_id", label="Игра"),
+        IntegerField("dep_id", label="Номер зависимости"),
         IntegerField("dep1", label="Рефлексия 1"),
         IntegerField("dep2", label="Рефлексия 2"),
         IntegerField("dep3", label="Рефлексия 3"),
@@ -153,4 +154,18 @@ class CertificateView(ModelView):
     label = 'Сертификаты'
     fields = [
         "id"
+    ]
+
+
+class GameResultView(ModelView):
+    model = GameResult
+    name = 'Результат игры'
+    label = 'Результаты игр'
+
+    fields = [
+        "id",
+        UserFullNameField(name="user_full_name", label="Пользователь"),
+        IntegerField("game_id", label="игра"),
+    IntegerField("score", label="Очки"),
+    DateField(name="finished_at", label="Дата прохождения"),
     ]
