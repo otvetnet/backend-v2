@@ -1,0 +1,177 @@
+-- DATA ONLY RESTORE SCRIPT generated from Backup_1.sql
+-- This script only inserts data without dropping/recreating tables
+-- Safe to run on existing database structure
+
+-- Временно отключаем проверку внешних ключей для избежания ошибок
+SET session_replication_role = replica;
+
+-- Вставляем данные в правильном порядке с учетом зависимостей
+
+-- Сначала survey (минимальные зависимости)
+INSERT INTO "survey" ("id", "title") VALUES
+(1, 'Как я веду себя')
+ON CONFLICT ("id") DO NOTHING;
+
+-- Затем game (нужны для scene)
+INSERT INTO "game" ("id", "title", "description", "game_group_id", "duration", "cover_image", "music") VALUES
+(1, 'Слово сильнее', 'Живое и интригующее — сразу говорит о конфликте и внутреннем напряжении. Ребёнок захочет узнать, что будет дальше', 1, 3, '/content/cover_1.png', '/content/background.mp3'),
+(2, 'Решай с умом', 'Немного дерзкое и разговорное. Подходит для подросткового мышления: ты можешь быть крутым, даже не залезая.', 2, 3, '/content/cover_2.png', '/content/background.mp3'),
+(3, 'Не бойся быть другим', 'Интерактивное приключение с загадками и моральными выборами. Азоту предстоит сделать правильный', 3, 3, '/content/cover_3.png', '/content/background.mp3'),
+(4, 'Секрет, которого не должно быть', 'Звучит интригующе, эмоционально. Внутренний голос — главный герой.', 4, 3, '/content/cover_4.png', '/content/background.mp3'),
+(5, 'Выключаю чат', 'Прямо по сути. Дети это поймут, а взрослые — одобрят', 5, 3, '/content/cover_5.png', '/content/background.mp3')
+ON CONFLICT ("id") DO NOTHING;
+
+-- Затем question (зависит от survey)
+INSERT INTO "question" ("id", "group_id", "voice", "text", "survey_id") VALUES
+(1, 1, '/content/Survey/Q1.mp3', 'Я легко теряю терпение', 1),
+(2, 1, '/content/Survey/Q2.mp3','Если меня обидели, то я обязательно отомщу', 1),
+(3, 1, '/content/Survey/Q3.mp3','Часто я злю других специально', 1),
+(4, 1, '/content/Survey/Q4.mp3','Я очень редко ссорюсь с родными', 1),
+(5, 1, '/content/Survey/Q5.mp3','Я не люблю, когда мне делают замечания', 1),
+(6, 2, '/content/Survey/Q6.mp3','Мне нравится делать что-то опасное', 1),
+(7, 2, '/content/Survey/Q7.mp3','Я люблю испытывать страх', 1),
+(8, 2, '/content/Survey/Q8.mp3','Если кого-то обижают, то я не вмешиваюсь', 1),
+(9, 2, '/content/Survey/Q9.mp3','Я иногда нарушаю установленные взрослыми правила', 1),
+(10, 2, '/content/Survey/Q10.mp3','Я люблю острые ощущения', 1),
+(11, 3, '/content/Survey/Q11.mp3','Я жду помощи от взрослых', 1),
+(12, 3, '/content/Survey/Q12.mp3','Я не могу отказать, когда меня о чем-то просят', 1),
+(13, 3, '/content/Survey/Q13.mp3','Я не общаюсь со сверстниками, так как они меня обижают', 1),
+(14, 3, '/content/Survey/Q14.mp3','Мне трудно просить других о помощи', 1),
+(15, 3, '/content/Survey/Q15.mp3','Мне часто кажется, что я не справлюсь', 1),
+(16, 4, '/content/Survey/Q16.mp3','Верю всему, что говорят по радио и телевидению', 1),
+(17, 4, '/content/Survey/Q17.mp3','Я доверяю незнакомым людям', 1),
+(18, 4, '/content/Survey/Q18.mp3','Иногда я делаю не думая', 1),
+(19, 4, '/content/Survey/Q19.mp3','Другие люди кажутся счастливее меня', 1),
+(20, 4, '/content/Survey/Q20.mp3','Я всегда соглашаюсь с окружающими', 1),
+(21, 5, '/content/Survey/Q21.mp3','Меня часто обижают', 1),
+(22, 5, '/content/Survey/Q22.mp3','Я часто попадаю в беду', 1),
+(23, 5, '/content/Survey/Q23.mp3','Я часто чувствую, что все против меня', 1),
+(24, 5, '/content/Survey/Q24.mp3','Меня часто дразнят', 1),
+(25, 5, '/content/Survey/Q25.mp3','Я не умею защищаться', 1),
+(26, 6, '/content/Survey/Q26.mp3','Я никогда никого не обижал', 1),
+(27, 6, '/content/Survey/Q27.mp3','Я всегда слушаюсь взрослых', 1),
+(28, 6, '/content/Survey/Q28.mp3','У меня не бывает плохого настроения', 1),
+(29, 6, '/content/Survey/Q29.mp3','Я всегда говорю правду', 1),
+(30, 6, '/content/Survey/Q30.mp3','Я никогда не злюсь', 1)
+ON CONFLICT ("id") DO NOTHING;
+
+-- Затем answeroption (зависит от question)
+INSERT INTO "answeroption" ("id", "text", "order", "question_id") VALUES
+(1, 'Да', 1, 1),
+(2, 'Нет', 2, 1),
+(3, 'Да', 1, 2),
+(4, 'Нет', 2, 2),
+(5, 'Да', 1, 3),
+(6, 'Нет', 2, 3),
+(7, 'Да', 1, 4),
+(8, 'Нет', 2, 4),
+(9, 'Да', 1, 5),
+(10, 'Нет', 2, 5),
+(11, 'Да', 1, 6),
+(12, 'Нет', 2, 6),
+(13, 'Да', 1, 7),
+(14, 'Нет', 2, 7),
+(15, 'Да', 1, 8),
+(16, 'Нет', 2, 8),
+(17, 'Да', 1, 9),
+(18, 'Нет', 2, 9),
+(19, 'Да', 1, 10),
+(20, 'Нет', 2, 10),
+(21, 'Да', 1, 11),
+(22, 'Нет', 2, 11),
+(23, 'Да', 1, 12),
+(24, 'Нет', 2, 12),
+(25, 'Да', 1, 13),
+(26, 'Нет', 2, 13),
+(27, 'Да', 1, 14),
+(28, 'Нет', 2, 14),
+(29, 'Да', 1, 15),
+(30, 'Нет', 2, 15),
+(31, 'Да', 1, 16),
+(32, 'Нет', 2, 16),
+(33, 'Да', 1, 17),
+(34, 'Нет', 2, 17),
+(35, 'Да', 1, 18),
+(36, 'Нет', 2, 18),
+(37, 'Да', 1, 19),
+(38, 'Нет', 2, 19),
+(39, 'Да', 1, 20),
+(40, 'Нет', 2, 20),
+(41, 'Да', 1, 21),
+(42, 'Нет', 2, 21),
+(43, 'Да', 1, 22),
+(44, 'Нет', 2, 22),
+(45, 'Да', 1, 23),
+(46, 'Нет', 2, 23),
+(47, 'Да', 1, 24),
+(48, 'Нет', 2, 24),
+(49, 'Да', 1, 25),
+(50, 'Нет', 2, 25),
+(51, 'Да', 1, 26),
+(52, 'Нет', 2, 26),
+(53, 'Да', 1, 27),
+(54, 'Нет', 2, 27),
+(55, 'Да', 1, 28),
+(56, 'Нет', 2, 28),
+(57, 'Да', 1, 29),
+(58, 'Нет', 2, 29),
+(59, 'Да', 1, 30),
+(60, 'Нет', 2, 30)
+ON CONFLICT ("id") DO NOTHING;
+
+-- Затем scene (зависит от game)
+INSERT INTO "scene" ("id", "game_id", "order", "type", "payload") VALUES
+(1, 1, 1, 'dialogue', '{"score": 0, "achievement": null, "next_scene_id": 2, "dialogues": [{"image": "/content/games/game_1/scenes/scene_1/1_1.jpg", "voice": "/content/games/game_1/scenes/scene_1/aud_1_1.mp3", "name": "", "text": "Азот возвращается домой после школы. Погода солнечная, дети играют во дворе. Вдруг он замечает Бульдозера, одноклассника, который с сердитым видом спорит с младшими ребятами у песочницы."}, {"image": "/content/games/game_1/scenes/scene_1/1_2.jpg", "voice": "/content/games/game_1/scenes/scene_1/aud_1_2.mp3", "name": "Бульдозер", "text": "Уходите отсюда! Это наша площадка. Мы тут главные!"}]}'),
+(2, 1, 1, 'dialogue', '{"score": 0, "achievement": null, "next_scene_id": 3, "dialogues": [{"image": "/content/games/game_1/scenes/scene_2/2_1.jpg", "voice": "/content/games/game_1/scenes/scene_2/aud_1_3.mp3", "name": "Азот", "text": "Привет, Бульдозер. Почему ты их прогоняешь?"}, {"image": "/content/games/game_1/scenes/scene_2/2_2.jpg", "voice": "/content/games/game_1/scenes/scene_2/aud_1_4.mp3", "name": "Бульдозер:", "text": "А что, ты за них? Ты тоже хочешь в песок полететь?"}]}'),
+(3, 1, 1, 'choice', '{"score": 1, "achievement": null, "next_scene_id": null, "description": "Выбери что Азот ответит Бульдозеру", "dialogues": [{"image": "", "voice": "", "name": "", "text": "Азот должен сделать выбор"}], "choices": [{"text": "Нет. Просто хочу, чтобы все играли спокойно. Драться не нужно.", "next_scene_id": 4}, {"text": "Ты мне надоел. Сейчас сам получишь!", "next_scene_id": 6}]}'),
+(4, 1, 1, 'dialogue', '{"score": 0, "achievement": null, "next_scene_id": 5, "dialogues": [{"image": "/content/games/game_1/scenes/scene_4/3_1.jpg", "voice": "/content/games/game_1/scenes/scene_4/aud_2_1.mp3", "name": "", "text": "Азот спокойно смотрит на Бульдозера и предлагает:"}, {"image": "/content/games/game_1/scenes/scene_4/3_2.jpg", "voice": "/content/games/game_1/scenes/scene_4/aud_2_2.mp3", "name": "Азот", "text": "Давайте лучше сыграем в мяч, а малыши пусть строят замок."}]}'),
+(5, 1, 1, 'dialogue', '{"score": 0, "achievement": {"title": "Ты разрядил конфликт и сохранил дружбу", "cover_image": "/content/games/game_1/achievements/4_2.jpg"}, "next_scene_id": 8, "dialogues": [{"image": "/content/games/game_1/scenes/scene_5/4_1.jpg", "voice": "", "name": "", "text": "Бульдозер колеблется, но соглашается. Спор заканчивается без ссоры. Малыши радуются, песочница оживает."}]}'),
+(6, 1, 1, 'dialogue', '{"score": 0, "achievement": null, "next_scene_id": 7, "dialogues": [{"image": "/content/games/game_1/scenes/scene_6/5_1.jpg", "voice": "/content/games/game_1/scenes/scene_6/aud_3_1.mp3", "name": "", "text": "Азот бросает сердитую фразу, и начинается ссора. Оба злятся, появляются обидные слова. Младшие дети убегают."}, {"image": "/content/games/game_1/scenes/scene_5/5_2.jpg", "voice": "/content/games/game_1/scenes/scene_5/aud_3_2.mp3", "name": "", "text": "Позже Азоту становится грустно."}]}'),
+(7, 1, 1, 'dialogue', '{"score": 0, "achievement": {"title": "Ты понял, как важно сохранять контроль. Теперь знаешь, как быть лучше.", "cover_image": "/content/games/game_1/achievements/6_2.jpg"}, "next_scene_id": 8, "dialogues": [{"image": "/content/games/game_1/scenes/scene_7/6_1.jpg", "voice": "/content/games/game_1/scenes/scene_7/aud_3_3.mp3", "name": "", "text": "Азот бросает сердитую фразу, и начинается ссора. Оба злятся, появляются обидные слова. Младшие дети убегают."}]}'),
+(8, 1, 1, 'match', '{"next_scene_id": 9, "achievement": null, "score": 1, "description": "", "pairs": [{"k": "Давайте играть по очереди!", "v": "Mир"}, {"k": "Хочешь — будем командой!", "v": "Мир"}, {"k": "Уходи сам!", "v": "Ccора"}, {"k": "Я тебя сейчас…!", "v": "Ссора"}]}'),
+(9, 1, 1, 'dialogue', '{"score": 0, "achievement": {"title": "Мастер спокойствия", "cover_image": ""}, "next_scene_id": null, "dialogues": [{"image": "/content/games/game_1/scenes/scene_9/7_1.jpg", "voice": "/content/games/game_1/scenes/scene_9/aud_end.mp3", "name": "Азот", "text": "Иногда хочется вспылить. Но спокойствие — это сила. Когда ты умеешь выбирать слова — ты становишься сильнее"}]}'),
+(10, 2, 1, 'dialogue', '{"score": 0, "achievement": null, "next_scene_id": 11, "dialogues": [{"image": "/content/games/game_2/scenes/scene_1/1_1.jpg", "voice": "/content/games/game_2/scenes/scene_1/aud_1_1.mp3", "name": "", "text": "Азот выходит из школы. На улице тепло, хочется скорее переодеться и поиграть. Навстречу ему выходит Димка — знакомый по двору."}, {"image": "/content/games/game_2/scenes/scene_1/1_2.jpg", "voice": "/content/games/game_2/scenes/scene_1/aud_1_2.mp3", "name": "Димка", "text": "Слушай, Азот! Мы с ребятами спорим, кто смелее. Залезем на крышу спортзала, сфоткаемся оттуда! Пошли?"}]}'),
+(11, 2, 1, 'dialogue', '{"score": 0, "achievement": null, "next_scene_id": 12, "dialogues": [{"image": "/content/games/game_2/scenes/scene_2/2_1.jpg", "voice": "/content/games/game_2/scenes/scene_2/aud_1_3.mp3", "name": "", "text": "Азот чувствует, как внутри появляется тревожное волнение."}, {"image": "/content/games/game_2/scenes/scene_2/2_2.jpg", "voice": "/content/games/game_2/scenes/scene_2/aud_1_4.mp3", "name": "", "text": "С одной стороны — интересно. Но с другой — это может быть опасно. А если кто-то не удержится? А если мама узнает?.."}]}'),
+(12, 2, 1, 'choice', '{"score": 1, "achievement": null, "next_scene_id": null, "description": "Выбери что ответить Азоту", "dialogues": [{"image": "/content/games/game_2/scenes/scene_3/3_1.jpg", "voice": "", "name": "", "text": "Азот должен сделать выбор"}], "choices": [{"text": "Я не лезу. Это глупо и опасно. Пошли лучше соберём трассу для машинок!", "next_scene_id": 13}, {"text": "Хм… Я не знаю. А если получится?", "next_scene_id": 14}, {"text": "Конечно! Я докажу, что не слабак!", "next_scene_id": 16}]}'),
+(13, 2, 1, 'dialogue', '{"score": 0, "achievement": {"title": "Ты стал примером для других.", "cover_image": "/content/games/game_2/achievements/4_a.jpg"}, "next_scene_id": 17, "dialogues": [{"image": "/content/games/game_2/scenes/scene_4/4_1.jpg", "voice": "/content/games/game_2/scenes/scene_4/aud_2_1.mp3", "name": "Азот", "text": "Я не лезу. Мне важнее здоровье и безопасность. Пошли лучше соберём трассу для машинок. Там и вид лучше, и не сломаем себе шею."}, {"image": "/content/games/game_2/scenes/scene_4/4_2.jpg", "voice": "/content/games/game_2/scenes/scene_4/aud_2_3.mp3", "name": "Димка", "text": "Знаешь, круто, что ты не пошёл. Я бы один точно не решился отказаться."}]}'),
+(14, 2, 1, 'dialogue', '{"score": 0, "achievement": null, "next_scene_id": 15, "dialogues": [{"image": "/content/games/game_2/scenes/scene_5/5_1.jpg", "voice": "/content/games/game_2/scenes/scene_5/aud_3_1.mp3", "name": "", "text": "Азот смотрит вверх, потом на Димку."}, {"image": "/content/games/game_2/scenes/scene_5/5_2.jpg", "voice": "/content/games/game_2/scenes/scene_5/aud_3_2.mp3", "name": "", "text": "Он делает шаг, но останавливается. Вспоминает слова учительницы:«Настоящая смелость — не в том, чтобы лезть, а в том, чтобы думать»"}]}'),
+(15, 2, 1, 'dialogue', '{"score": 0, "achievement": {"title": "Ты выбрал свою голову, а не давление", "cover_image": "/content/games/game_2/achievements/6_a.jpg"}, "next_scene_id": 17, "dialogues": [{"image": "/content/games/game_2/scenes/scene_6/6_1.jpg", "voice": "/content/games/game_2/scenes/scene_6/aud_3_3.mp3", "name": "", "text": "Нет. Я не хочу. И вам не советую."}]}'),
+(16, 2, 1, 'dialogue', '{"score": 0, "achievement": {"title": "Ты осознал риск и сделал шаг назад", "cover_image": "/content/games/game_2/achievements/7_a.jpg"}, "next_scene_id": 17, "dialogues": [{"image": "/content/games/game_2/scenes/scene_7/7_1.jpg", "voice": "/content/games/game_2/scenes/scene_7/aud_4_12.mp3", "name": "", "text": "Азот начинает подниматься. Камень срывается. Он еле удерживается. В голове звучит голос:"}, {"image": "/content/games/game_2/scenes/scene_7/7_2.jpg", "voice": "/content/games/game_2/scenes/scene_7/aud_4_3.mp3", "name": "", "text": "Он сходит вниз испуганным. Вечером рассказывает всё родителям. Они спокойно выслушивают и благодарят за честность. Предлагают вместе найти безопасные приключения."}]}'),
+(17, 2, 1, 'match', '{"next_scene_id": 18, "achievement": null, "score": 1, "description": "", "pairs": [{"k": "Крыша спортзала", "v": "опасно"}, {"k": "Постройка трассы для машинок", "v": "безопасно и интересно"}, {"k": "Прыжки с лестницы", "v": "риск"}, {"k": "Поход в парк с друзьями", "v": "безопасно"}]}'),
+(18, 2, 1, 'dialogue', '{"score": 0, "achievement": {"title": "Ты выбрал разумно — и стал сильнее", "cover_image": "/content/games/game_2/achievements/6_a.jpg"}, "next_scene_id": null, "dialogues": [{"image": "/content/games/game_2/scenes/scene_9/8_1.jpg", "voice": "/content/games/game_2/scenes/scene_9/aud_6_1.mp3", "name": "Азот", "text": "Быть смелым — это не значит рисковать. Это значит действовать безопасно, даже если тебя подталкивают."}]}'),
+(19, 3, 1, 'dialogue', '{"score": 0, "achievement": null, "next_scene_id": 20, "dialogues": [{"image": "/content/games/game_3/scenes/scene_1/image_1.png", "voice": "/content/games/game_3/scenes/scene_1/g1_s1_teacher.mp3", "name": "Учитель", "text": "Сегодня командная игра. Главное — уважение к друг другу и работа в команде"}, {"image": "/content/games/game_3/scenes/scene_1/image_2.png", "voice": "/content/games/game_3/scenes/scene_1/g1_s1_buldoser.mp3", "name": "Бульдозер", "text": "Давайте быстрее! Я предлагаю, чтобы я был капитаном. Мы точно победим. Кто со мной - не пожалеет!"}]}'),
+(20, 3, 1, 'dialogue', '{"score": 0, "achievement": null, "next_scene_id": 21, "dialogues": [{"image": "/content/games/game_3/scenes/scene_2/image_1.png", "voice": "/content/games/game_3/scenes/scene_2/g1_s2_azot.mp3", "name": "", "text": "Азот колеблется и переживает"}, {"image": "/content/games/game_3/scenes/scene_2/image_2.png", "voice": "/content/games/game_3/scenes/scene_2/g1_s2_azot.mp3", "name": "", "text": "Азот не хотел бы подчиняться Бульдозеру"}]}'),
+(21, 3, 1, 'choice', '{"score": 1, "achievement": null, "next_scene_id": null, "description": "Выбери команду для азота", "dialogues": [{"image": "/content/games/game_3/scenes/scene_3/image_1.png", "voice": "", "name": "", "text": "Азот должен сделать выбор"}], "choices": [{"text": "Я выберу свою команду — с кем мне комфортно работать", "next_scene_id": 22}, {"text": "Все пошли к Бульдозеру — пойду тоже, чтобы не быть ''против''", "next_scene_id": 23}, {"text": "Я просто подожду — может, всё само решится", "next_scene_id": 24}]}'),
+(22, 3, 1, 'dialogue', '{"score": 0, "achievement": {"title": "Осознанный выбор и уверенность в себе", "cover_image": "/content/games/game_3/achievements/g1_a1.png"}, "next_scene_id": 26, "dialogues": [{"image": "/content/games/game_3/scenes/scene_4/image_1.png", "voice": "/content/games/game_3/scenes/scene_4/g1_s4_azot.mp3", "name": "Азот", "text": "Пусть мы и не победим, но мне важно, чтобы мы уважали друг друга и слушали идеи."}, {"image": "/content/games/game_3/scenes/scene_4/image_2.png", "voice": "/content/games/game_3/scenes/scene_4/g1_s4_teacher.mp3", "name": "Учитель", "text": "Выбор Азота — зрелый и осознанный. Это пример уважения к себе и другим!"}]}'),
+(23, 3, 1, 'dialogue', '{"score": 0, "achievement": {"title": "Чужой выбор не всегда твой", "cover_image": "/content/games/game_3/achievements/g1_a2.png"}, "next_scene_id": 26, "dialogues": [{"image": "/content/games/game_3/scenes/scene_5/image_1.png", "voice": "/content/games/game_3/scenes/scene_5/g1_s5_azot.mp3", "name": "", "text": "Бульдозер командует и перебивает других. Азот хочет высказаться, но молчит"}, {"image": "/content/games/game_3/scenes/scene_5/image_2.png", "voice": "/content/games/game_3/scenes/scene_5/g1_s5_speaker.mp3", "name": "", "text": "Азот после игры чувствует неудовлетворение. Дома он думает о том, нужно быть смелее"}]}'),
+(24, 3, 1, 'dialogue', '{"score": 0, "achievement": {"title": "Не выбирать — тоже выбор", "cover_image": "/content/games/game_3/achievements/g1_a3.png"}, "next_scene_id": 26, "dialogues": [{"image": "/content/games/game_3/scenes/scene_6/image_1.png", "voice": "/content/games/game_3/scenes/scene_6/g1_s6_speaker.mp3", "name": "", "text": "Азот отходит в сторону. Игра начинается без него"}, {"image": "/content/games/game_3/scenes/scene_6/image_2.png", "voice": "/content/games/game_3/scenes/scene_6/g1_s6_teacher.mp3", "name": "Учитель", "text": "Ты имеешь право выбирать. Даже если ошибешься - это будет твой опыт."}]}'),
+(25, 3, 1, 'match', '{"next_scene_id": 26, "achievement": null, "score": 1, "description": "", "pairs": [{"k": "Ты с нами или против", "v": "Я выбираю по-своему — это не значит ''против''"}, {"k": "Только слабые не идут с нами!", "v": "Быть собой — не слабость"}, {"k": "Ты странный!", "v": "Я просто не такой как ты — и это нормально"}, {"k": "А что, если ты ошибешься?", "v": "Значит, я сам узнаю и научусь"}]}'),
+(26, 3, 1, 'dialogue', '{"score": 0, "achievement": {"title": "Ты стал собой и это твоя сила", "cover_image": "/content/games/game_3/achievements/g1_a4.png"}, "next_scene_id": null, "dialogues": [{"image": "/content/games/game_3/scenes/scene_7/image_1.png", "voice": "/content/games/game_3/scenes/scene_7/g1_s7_azot.mp3", "name": "Азот", "text": "Быть с большинством - легко. Но быть собой - важнее. Я могу выбирать. И могу уважать свой выбор!"}]}'),
+(28, 4, 1, 'dialogue', '{"score": 0, "achievement": null, "next_scene_id": 29, "dialogues": [{"image": "/content/games/game_4/scenes/scene_1/1_1.jpg", "voice": "/content/games/game_4/scenes/scene_1/aud_1_1.mp3", "name": "", "text": "Азот возвращается домой после школы. На скамейке у входа сидит незнакомый взрослый — в серой куртке и бейсболке. Он не выглядит пугающе, говорит мягко и дружелюбно."}, {"image": "/content/games/game_4/scenes/scene_1/1_2.jpg", "voice": "/content/games/game_4/scenes/scene_1/aud_1_23.mp3", "name": "Незнакомец", "text": "Привет. Мне нужен помощник. Ты выглядишь умным. Не живёшь по одному адресу? Там тебя ждёт сюрприз. Голос у него спокойный, но Азоту становится немного не по себе."}]}'),
+(29, 4, 1, 'dialogue', '{"score": 0, "achievement": null, "next_scene_id": 30, "dialogues": [{"image": "/content/games/game_4/scenes/scene_2/3_1.jpg", "voice": "", "name": "", "text": "Азот колеблется."}, {"image": "/content/games/game_4/scenes/scene_2/2_1.jpg", "voice": "/content/games/game_4/scenes/scene_2/aud_1_4.mp3", "name": "", "text": "Я не знаю этого человека… Почему он выбрал меня? Почему подарок — это тайна? Мама говорила — если не уверен, лучше спросить или уйти."}]}'),
+(30, 4, 1, 'choice', '{"score": 1, "achievement": null, "next_scene_id": null, "description": "Выбери что ответить незнакомцу", "dialogues": [{"image": "/content/games/game_4/scenes/scene_3/3_1.jpg", "voice": "", "name": "", "text": "Азот должен сделать выбор"}], "choices": [{"text": "А что за сюрприз?", "next_scene_id": 31}, {"text": "Извините, я вас не знаю. Я пойду домой.", "next_scene_id": 33}, {"text": "Сейчас позвоню маме и спрошу", "next_scene_id": 35}]}'),
+(31, 4, 1, 'dialogue', '{"score": 0, "achievement": null, "next_scene_id": 32, "dialogues": [{"image": "/content/games/game_4/scenes/scene_4/4_1.jpg", "voice": "/content/games/game_4/scenes/scene_4/aud_2_1.mp3", "name": "Незнакомец", "text": "Это сюрприз. Только для тебя. Главное — не говори никому."}, {"image": "/content/games/game_4/scenes/scene_4/4_2.jpg", "voice": "/content/games/game_4/scenes/scene_4/aud_2_2.mp3", "name": "", "text": "Если это безопасно — зачем скрывать?.."}]}'),
+(32, 4, 1, 'dialogue', '{"score": 0, "achievement": {"title": "Ты почувствовал неладное — и выбрал правильно", "cover_image": "/content/games/game_4/achievements/5_a.jpg"}, "next_scene_id": 37, "dialogues": [{"image": "/content/games/game_4/scenes/scene_5/5_1.jpg", "voice": "/content/games/game_4/scenes/scene_5/aud_2_34_1.mp3", "name": "", "text": "Азот задумывается, чувствует тревогу — и уходит."}, {"image": "/content/games/game_4/scenes/scene_5/5_2.jpg", "voice": "/content/games/game_4/scenes/scene_5/aud_2_34_2.mp3", "name": "", "text": "Он делится этим дома. Родители хвалят его за осторожность."}]}'),
+(33, 4, 1, 'dialogue', '{"score": 0, "achievement": null, "next_scene_id": 34, "dialogues": [{"image": "/content/games/game_4/scenes/scene_6/6_1.jpg", "voice": "/content/games/game_4/scenes/scene_6/aud_3_1.mp3", "name": "Азот", "text": "Простите, я никого не слушаю без разрешения взрослых."}, {"image": "/content/games/game_4/scenes/scene_6/6_2.jpg", "voice": "/content/games/game_4/scenes/scene_6/aud_3_23_1.mp3", "name": "", "text": "Мужчина пожимает плечами и уходит."}]}'),
+(34, 4, 1, 'dialogue', '{"score": 0, "achievement": {"title": "Ты сохранил безопасность и дал пример другим", "cover_image": "/content/games/game_4/achievements/7_a.jpg"}, "next_scene_id": 37, "dialogues": [{"image": "/content/games/game_4/scenes/scene_7/7_1.jpg", "voice": "/content/games/game_4/scenes/scene_7/aud_2_3.mp3", "name": "Азот", "text": "Азот приходит домой, всё рассказывает. Родители говорят: \n— Ты действовал спокойно и правильно. Мы гордимся тобой."}]}'),
+(35, 4, 1, 'dialogue', '{"score": 0, "achievement": null, "next_scene_id": 36, "dialogues": [{"image": "/content/games/game_4/scenes/scene_8/8_1.jpg", "voice": "/content/games/game_4/scenes/scene_8/aud_4_1.mp3", "name": "", "text": "Азот достаёт телефон, звонит маме."}, {"image": "/content/games/game_4/scenes/scene_8/8_2.jpg", "voice": "/content/games/game_4/scenes/scene_8/aud_4_2.mp3", "name": "Мама", "text": "Молодец, что позвонил. Это был странный случай. Я иду к тебе."}]}'),
+(36, 4, 1, 'dialogue', '{"score": 0, "achievement": {"title": "Ты не остался один. Обратиться за помощью — это сила.", "cover_image": "/content/games/game_4/achievements/9_a.jpg"}, "next_scene_id": 37, "dialogues": [{"image": "/content/games/game_4/scenes/scene_9/9_1.jpg", "voice": "/content/games/game_4/scenes/scene_9/aud_4_3.mp3", "name": "", "text": "Позже Азот обсуждает ситуацию с учителем и узнаёт, какие ещё есть тревожные сигналы."}]}'),
+(37, 4, 1, 'match', '{"next_scene_id": 38, "achievement": null, "score": 1, "description": "", "pairs": [{"k": "Приходи один — я тебя жду", "v": "Tревожно"}, {"k": "Давай без родителей", "v": "Тревожно"}, {"k": "Ты сам решаешь — не бойся спросить", "v": "Верно"}, {"k": "Это между нами. Не рассказывай", "v": "Тревожно"}]}'),
+(38, 4, 1, 'dialogue', '{"score": 0, "achievement": {"title": "Ты умеешь думать — и выбираешь правильно", "cover_image": "/content/games/game_4/achievements/9_a.jpg"}, "next_scene_id": null, "dialogues": [{"image": "/content/games/game_4/scenes/scene_11/10_1.jpg", "voice": "/content/games/game_4/scenes/scene_11/aud_5_1.mp3", "name": "Азот", "text": "Раньше я не думал — просто соглашался. Теперь знаю: если не уверен — лучше спросить или отказаться. Это не страх — это умение заботиться о себе."}]}'),
+(39, 5, 1, 'dialogue', '{"score": 0, "achievement": null, "next_scene_id": 40, "dialogues": [{"image": "/content/games/game_5/scenes/scene_1/1_1.jpg", "voice": "/content/games/game_5/scenes/scene_1/aud_1_1.mp3", "name": "", "text": "Азот приходит домой. На экране телефона — сообщения в школьном чате."}, {"image": "/content/games/game_5/scenes/scene_1/1_2.jpg", "voice": "/content/games/game_5/scenes/scene_1/aud_1_2.mp3", "name": "Школьный чат 5Б", "text": "— Ха-ха, Азот опять как бот ответил у доски!\n— Снимем, как он читает — и выложим!\n— Он даже не обидится, он всё схавает."}]}'),
+(40, 5, 1, 'dialogue', '{"score": 0, "achievement": null, "next_scene_id": 41, "dialogues": [{"image": "/content/games/game_5/scenes/scene_2/2_1.jpg", "voice": "/content/games/game_5/scenes/scene_2/aud_1_3.mp3", "name": "", "text": "Азот читает. На экране появляется новое сообщение."}, {"image": "/content/games/game_5/scenes/scene_2/2_2.jpg", "voice": "/content/games/game_5/scenes/scene_2/aud_1_4.mp3", "name": "", "text": "— Азот, слабо ответить им что-нибудь?"}]}'),
+(41, 5, 1, 'dialogue', '{"score": 0, "achievement": null, "next_scene_id": 42, "dialogues": [{"image": "/content/games/game_5/scenes/scene_3/3_1.jpg", "voice": "/content/games/game_5/scenes/scene_3/aud_1_5.mp3", "name": "Мысли Азота", "text": "Они издеваются? Или просто шутят?.. Почему никто не останавливает их?"}]}'),
+(42, 5, 1, 'choice', '{"score": 1, "achievement": null, "next_scene_id": null, "description": "Выбери что ответить Азот.", "dialogues": [{"image": "/content/games/game_5/scenes/scene_4/4_1.jpg", "voice": "", "name": "", "text": "Азот должен сделать выбор."}], "choices": [{"text": "Сам ты бот! Лучше за собой следи!", "next_scene_id": 43}, {"text": "Мне не по себе… но я не хочу ссориться.", "next_scene_id": 45}, {"text": "Окей. Сейчас я покажу, кто здесь кто!", "next_scene_id": 46}, {"text": "Вы мне неприятны. Я выхожу из чата.", "next_scene_id": 48}]}'),
+(43, 5, 1, 'dialogue', '{"score": 0, "achievement": null, "next_scene_id": 44, "dialogues": [{"image": "/content/games/game_5/scenes/scene_5/5_1.jpg", "voice": "/content/games/game_5/scenes/scene_5/aud_2_1.mp3", "name": "", "text": "Азот пишет грубое сообщение."}, {"image": "/content/games/game_5/scenes/scene_5/5_2.jpg", "voice": "/content/games/game_5/scenes/scene_5/aud_2_2.mp3", "name": "", "text": "Через секунду в ответ — шквал гифок и скринов. Его слова перекручивают."}]}'),
+(44, 5, 1, 'dialogue', '{"score": 0, "achievement": {"title": "Ты понял, что злость не решает проблему.", "cover_image": "/content/games/game_5/achievements/6_a.jpg"}, "next_scene_id": 50, "dialogues": [{"image": "/content/games/game_5/scenes/scene_6/6_1.jpg", "voice": "/content/games/game_5/scenes/scene_6/aud_2_3.mp3", "name": "Азот", "text": "Стало ли мне легче? Они ведь этого и ждали..."}, {"image": "/content/games/game_5/scenes/scene_6/6_2.jpg", "voice": "/content/games/game_5/scenes/scene_6/aud_2_4.mp3", "name": "", "text": "Он удаляет сообщение, чувствует тревогу и злость."}]}'),
+(45, 5, 1, 'dialogue', '{"score": 0, "achievement": {"title": "Ты выбрал спокойствие. И кто-то тебя поддержал.", "cover_image": "/content/games/game_5/achievements/7_a.jpg"}, "next_scene_id": 50, "dialogues": [{"image": "/content/games/game_5/scenes/scene_7/7_1.jpg", "voice": "/content/games/game_5/scenes/scene_7/aud_3_1.mp3", "name": "", "text": "Азот ничего не отвечает. Смотрит на экран, глубоко дышит."}, {"image": "/content/games/game_5/scenes/scene_7/7_2.jpg", "voice": "/content/games/game_5/scenes/scene_7/aud_3_2.mp3", "name": "Одноклассник", "text": "— Азот, молодец, что не ввёлся. Я потом им написал, чтобы не перегибали."}]}'),
+(46, 5, 1, 'dialogue', '{"score": 0, "achievement": null, "next_scene_id": 47, "dialogues": [{"image": "/content/games/game_5/scenes/scene_8/8_1.jpg", "voice": "/content/games/game_5/scenes/scene_8/aud_4_1.mp3", "name": "", "text": "Азот публикует оскорбительную картинку."}, {"image": "/content/games/game_5/scenes/scene_8/8_2.jpg", "voice": "/content/games/game_5/scenes/scene_8/aud_4_2.mp3", "name": "Чат", "text": "— О, он с нами теперь! Лови скрин!"}]}'),
+(47, 5, 1, 'dialogue', '{"score": 0, "achievement": {"title": "Ты понял, что уважение начинается с тебя.", "cover_image": "/content/games/game_5/achievements/9_a.jpg"}, "next_scene_id": 50, "dialogues": [{"image": "/content/games/game_5/scenes/scene_9/9_1.jpg", "voice": "/content/games/game_5/scenes/scene_9/aud_4_3.mp3", "name": "", "text": "Они не поняли. Или поняли, но специально провоцируют?"}]}'),
+(48, 5, 1, 'dialogue', '{"score": 0, "achievement": null, "next_scene_id": 49, "dialogues": [{"image": "/content/games/game_5/scenes/scene_10/10_1.jpg", "voice": "/content/games/game_5/scenes/scene_10/aud_5_1.mp3", "name": "Азот", "text": "— Я не обязан читать это. Я выхожу."}, {"image": "/content/games/game_5/scenes/scene_10/10_2.jpg", "voice": "/content/games/game_5/scenes/scene_10/aud_5_2.mp3", "name": "", "text": "Азот покидает чат. Через 10 минут — сообщение от одноклассницы."}]}'),
+(49, 5, 1, 'dialogue', '{"score": 0, "achievement": {"title": "Ты вышел из ситуации спокойно и сохранил себя.", "cover_image": "/content/games/game_5/achievements/11_a.jpg"}, "next_scene_id": 50, "dialogues": [{"image": "/content/games/game_5/scenes/scene_11/11_1.jpg", "voice": "/content/games/game_5/scenes/scene_11/aud_5_3.mp3", "name": "Одноклассница", "text": "— Азот, ты всё правильно сделал. Если что — я с тобой."}]}'),
+(50, 5, 1, 'match', '{"next_scene_id": 52, "achievement": null, "score": 1, "description": "", "pairs": [{"k": "Мне неприятно — я ухожу", "v": "Mир"}, {"k": "Вы глупые", "v": "Kонфликт"}, {"k": "Я выбираю не участвовать в этом", "v": "Мирp"}, {"k": "Сам ты бот!", "v": "Конфликт"}, {"k": "Я не с вами. Мне важнее моё настроение", "v": "Мир"}]}'),
+(52, 5, 1, 'dialogue', '{"score": 0, "achievement": {"title": "Ты выбрал себя, а не конфликт", "cover_image": "/content/games/game_5/achievements/11_a.jpg"}, "next_scene_id": null, "dialogues": [{"image": "/content/games/game_5/scenes/scene_12/12_1.jpg", "voice": "/content/games/game_5/scenes/scene_12/aud_end.mp3", "name": "Азот", "text": "— Раньше я думал, что надо огрызаться или терпеть. А теперь знаю: я могу просто выйти. Я могу выбирать. И быть сильным — значит не вестись."}]}')
+ON CONFLICT ("id") DO NOTHING;
+
+-- Включаем обратно проверку внешних ключей
+RESET session_replication_role;

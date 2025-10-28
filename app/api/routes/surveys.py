@@ -100,7 +100,7 @@ def submit(*, session: SessionDep, submission: SurveySubmission) -> Any:
     q_fields = {f"q{i}": answer_map.get(i, 0) for i in range(1, 31)}
     g_fields = {f"g{i}_total": group_scores.get(i, 0) for i in range(1, 7)}
 
-    # 6. Определение выбранной группы
+    # 6. Определение выбранной группы (для обычного прохождения)
     filtered_scores = {g: s for g, s in group_scores.items() if g and g > 0}
     chosen_group = 0
     if filtered_scores:
@@ -116,16 +116,7 @@ def submit(*, session: SessionDep, submission: SurveySubmission) -> Any:
         if len(group_ids_in_answers) == 1:
             chosen_group = list(group_ids_in_answers)[0]
 
-    # 7. Поля рефлексии (dep1..dep5)
-    dep_answers = []
-    if chosen_group and group_answers.get(chosen_group):
-        sorted_by_qid = sorted(group_answers[chosen_group], key=lambda x: x[0])
-        dep_answers = [v for (_qid, v) in sorted_by_qid][:5]
-
-    dep_fields = {f"dep{i}": (dep_answers[i-1] if i-1 < len(dep_answers) else 0) for i in range(1, 6)}
-    dep_total = sum(dep_answers)
-
-    # 8. Поиск существующей записи
+    # 7. Поиск существующей записи
     existing_response = None
     if user_uuid:
         existing_response = session.exec(
@@ -135,16 +126,66 @@ def submit(*, session: SessionDep, submission: SurveySubmission) -> Any:
             )
         ).first()
 
-    # 9. Определяем, это рефлексия или нет
-    # Лучше использовать явный флаг из схемы (submission.is_reflection)
+    # 8. Определяем, это рефлексия или нет
     is_reflection = getattr(submission, "is_reflection", False)
     if not is_reflection and existing_response is not None and len(submission.answers) <= 5:
         # fallback для старых клиентов без флага
         is_reflection = True
 
+    # 9. РАСЧЕТ ПОЛЕЙ РЕФЛЕКСИИ - ВАЖНО: зависит от типа прохождения
+    dep_answers = []
+    dep_fields = {f"dep{i}": 0 for i in range(1, 6)}
+    dep_total = 0
+
+    print(f"[DEBUG] is_reflection: {is_reflection}")
+    print(f"[DEBUG] submission answers: {[(a.question_id, a.answer_option_id) for a in submission.answers]}")
+    print(f"[DEBUG] group_answers: {group_answers}")
+
+    if is_reflection and existing_response:
+        # При рефлексии берем ответы из текущих group_answers
+        current_group = None
+        # Находим группу по первому ответу в group_answers
+        for gid, answers in group_answers.items():
+            if answers:  # если есть ответы в этой группе
+                current_group = gid
+                break
+        
+        if current_group and 1 <= current_group <= 6:
+            # Берем первые 5 ответов этой группы в порядке ID вопросов
+            sorted_answers = sorted(group_answers[current_group], key=lambda x: x[0])
+            dep_answers = [v for (_qid, v) in sorted_answers][:5]
+            print(f"[DEBUG] Taking first 5 answers from group {current_group}: {dep_answers}")
+    else:
+        # При обычном прохождении используем вычисленный chosen_group
+        if chosen_group and group_answers.get(chosen_group):
+            sorted_by_qid = sorted(group_answers[chosen_group], key=lambda x: x[0])
+            dep_answers = [v for (_qid, v) in sorted_by_qid][:5]
+
+    # Заполняем dep_fields на основе dep_answers
+    dep_fields = {f"dep{i}": (dep_answers[i-1] if i-1 < len(dep_answers) else 0) for i in range(1, 6)}
+    dep_total = sum(dep_answers)
+
+    print(f"[DEBUG] Final dep_fields: {dep_fields}, dep_total: {dep_total}")
+
     # 10. Создание или обновление записи
     if existing_response:
-        if not is_reflection:
+        if is_reflection:
+            # --- РЕФЛЕКСИЯ: обновляем только поля dep1-dep5 и dep_total ---
+            print("[INFO] Reflection mode detected — updating only reflection fields")
+            
+            # Обновляем поля рефлексии новыми значениями
+            existing_response.dep1 = dep_fields["dep1"]
+            existing_response.dep2 = dep_fields["dep2"]
+            existing_response.dep3 = dep_fields["dep3"]
+            existing_response.dep4 = dep_fields["dep4"]
+            existing_response.dep5 = dep_fields["dep5"]
+            existing_response.dep_total = dep_total
+            
+            print(f"[DEBUG] Reflection updated: dep1={dep_fields['dep1']}, dep2={dep_fields['dep2']}, "
+                  f"dep3={dep_fields['dep3']}, dep4={dep_fields['dep4']}, dep5={dep_fields['dep5']}, "
+                  f"dep_total={dep_total}")
+                  
+        else:
             # --- обычное прохождение ---
             answered_qids = set([ans.question_id for ans in submission.answers])
             for k, v in q_fields.items():
@@ -175,17 +216,15 @@ def submit(*, session: SessionDep, submission: SurveySubmission) -> Any:
             existing_response.age = user_data["age"]
             existing_response.school = user_data["school"]
             existing_response.city = user_data["city"]
-        else:
-            print("[INFO] Reflection mode detected — updating only dep fields")
-
-        # --- обновляем dep поля (всегда) ---
-        existing_response.dep1 = dep_fields["dep1"]
-        existing_response.dep2 = dep_fields["dep2"]
-        existing_response.dep3 = dep_fields["dep3"]
-        existing_response.dep4 = dep_fields["dep4"]
-        existing_response.dep5 = dep_fields["dep5"]
-        existing_response.dep_total = dep_total
-        existing_response.dep_id = chosen_group
+            
+            # При обычном прохождении обновляем ВСЕ поля, включая dep_id
+            existing_response.dep1 = dep_fields["dep1"]
+            existing_response.dep2 = dep_fields["dep2"]
+            existing_response.dep3 = dep_fields["dep3"]
+            existing_response.dep4 = dep_fields["dep4"]
+            existing_response.dep5 = dep_fields["dep5"]
+            existing_response.dep_total = dep_total
+            existing_response.dep_id = chosen_group
 
         survey_response = existing_response
     else:
@@ -214,7 +253,7 @@ def submit(*, session: SessionDep, submission: SurveySubmission) -> Any:
     session.commit()
     session.refresh(survey_response)
 
-    # 11. Выбор игры (оригинальный механизм)
+    # 11. Выбор игры 
     suggested_game_id: int | None = None
     if chosen_group:
         game = session.exec(
