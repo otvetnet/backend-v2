@@ -19,7 +19,10 @@ class Game(SQLModel, table=True):
     duration: int = Field(default=None, nullable=False) # in minutes
     cover_image: str = Field(default="", nullable=False) # path to image
     music: str = Field(default=None, nullable=False) # path to audio
-    scenes: List["Scene"] = Relationship(back_populates="game")
+    scenes: List["Scene"] = Relationship(
+        back_populates="game",
+        sa_relationship_kwargs={"order_by": lambda: Scene.id},
+    )
 
 
 class Scene(SQLModel, table=True):
