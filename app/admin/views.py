@@ -126,6 +126,7 @@ class GameView(ModelView):
     fields = [
         "id",
         IntegerField("game_group_id", label="game_group_id"),
+        "t_voice",
         "title",
         "description",
         "duration",

@@ -59,6 +59,7 @@ class ScenePublic(BaseModel):
 class GamePublic(BaseModel):
     id: int
     title: str
+    t_voice: str
     description: str
     game_group_id: int
     duration: int
@@ -70,6 +71,7 @@ class GamePublic(BaseModel):
 class GameBasePublic(BaseModel):
     id: int
     title: str
+    t_voice: str
     description: str
     game_group_id: int
     duration: int

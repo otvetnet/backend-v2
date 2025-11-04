@@ -13,6 +13,7 @@ if TYPE_CHECKING:
 class Game(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
     title: str = Field(nullable=False)
+    t_voice: str = Field(nullable=False)
     description: str = Field(nullable=False)
     # group id used to map survey question groups to games
     game_group_id: int = Field(default=0, nullable=False)
