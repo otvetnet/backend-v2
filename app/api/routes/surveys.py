@@ -99,6 +99,15 @@ def submit(*, session: SessionDep, submission: SurveySubmission) -> Any:
     # 5. Подготовка полей для БД
     q_fields = {f"q{i}": answer_map.get(i, 0) for i in range(1, 31)}
     g_fields = {f"g{i}_total": group_scores.get(i, 0) for i in range(1, 7)}
+    
+    # Calculate total for games 1-5
+    games_1_5_total = sum(group_scores.get(i, 0) for i in range(1, 6))
+    # Calculate total for all games (1-6)
+    games_total = games_1_5_total + group_scores.get(6, 0)
+    
+    # Add totals to g_fields
+    g_fields["games_1_5_total"] = games_1_5_total
+    g_fields["games_total"] = games_total
 
     # 6. Определение выбранной группы (для обычного прохождения)
     filtered_scores = {g: s for g, s in group_scores.items() if g and g > 0}

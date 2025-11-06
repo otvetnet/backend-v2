@@ -91,6 +91,11 @@ class SurveyResponse(SQLModel, table=True):
     q29: int = Field(default=0)
     q30: int = Field(default=0)
     g6_total: int = Field(default=0)
+    
+    # Total for games 1-5
+    games_1_5_total: int = Field(default=0)
+    # Total for all games (1-6)
+    games_total: int = Field(default=0)
 
     dep_id: int = Field(default=0)
     # dependency (зависимость) 1..5 and total
